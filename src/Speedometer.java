@@ -1,20 +1,28 @@
 public class Speedometer {
-    float deltaTime;
-    float distance = 1; // distance between sensors in: meters
+    Sensor sensor1;
+    Sensor sensor2;
 
-    float speed;
+    double distance = 1.00000000000000; // distance between sensors in: meters
+    double delayAdjusment = 3.0;
+
+    double deltaTime;
 
     public Speedometer() {
-        this.deltaTime = -1;
-        this.speed = -1; // unit of measure: kilometers per hour
+        this.sensor1 = new Sensor();
+        this.sensor2 = new Sensor();
     }
 
-    public float getSpeed(float initialTime, float finalTime) {
+    public double getSpeed(long measurement1, long measurement2) {
         try {
-            this.deltaTime = finalTime - initialTime;
-            this.speed = (this.distance / (this.deltaTime / 1000) * 3600) / 1000;
+            double initialTime = (double) measurement1;
+            double finalTime = (double) measurement2;
 
-            return this.speed;
+            this.delayAdjusment = 2.0;
+            this.deltaTime = (finalTime - initialTime - this.delayAdjusment) / 1000; // unit of measurement: seconds
+
+            double speed = (this.distance / this.deltaTime) * 3.6; // unit of measurement: kilometers per hour
+
+            return speed;
         }
         catch(Exception e) {
             System.out.println(e.getMessage());

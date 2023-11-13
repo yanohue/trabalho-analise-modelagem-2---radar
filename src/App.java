@@ -1,29 +1,55 @@
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        Sensor sensor = new Sensor();
-        float measurement[] = sensor.getTimeSimulation();
-
         Speedometer speedometer = new Speedometer();
-        float speed = speedometer.getSpeed(measurement[0], measurement[1]);
 
-        LocalDateTime localDateTime = LocalDateTime.now();
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formatedDateTime = localDateTime.format(format);
+        double speed = 0.0;
+        double speedLimit = 60.0;
 
-        LocalTime preciseTime = LocalTime.now();
+        List<Ticket> ticketList = new ArrayList<Ticket>();
+        
+        for(int i = 0; i < 50; i++) {
+            long measurement1 = speedometer.sensor1.getCurrentTimeMillis();
 
-        System.out.println(formatedDateTime);
-        System.out.println(preciseTime);
+            // these two lines simulates the interval of a vehicle passing by the pair of sensors
+            long interval = Double.valueOf(Math.random() * 60 + 40).longValue();
+            Thread.sleep(interval);
 
+            long measurement2 = speedometer.sensor2.getCurrentTimeMillis();
 
-        System.out.println(measurement[0] + " ms");
-        System.out.println(measurement[1] + " ms");
-        System.out.println(speed + " km/h");
+            speed = speedometer.getSpeed(measurement1, measurement2);
+
+            Vehicle vehicle = new Vehicle(speed);
+
+            if(speed > speedLimit) {
+                Ticket ticket = new Ticket(vehicle);
+
+                ticket.getLicencePlate();
+                ticket.getSpeedPercentageExceeded(speedLimit);
+
+                ticketList.add(ticket);
+
+                // System.out.println("Vehicle fined!" + "\n" + "Date and time: " + ticket.dateTime + "\n" + "Speed exceeds limit: " + vehicle.speed + "\n");
+            }
+            else {
+                System.out.println("Vehicle OK!");
+            }
+
+            Thread.sleep(500);
+        }
+
+        for(int i = 0; i < ticketList.size(); i++) {
+            Ticket ticketNow = ticketList.get(i);
+
+            System.out.println(ticketNow.vehicle.speed);
+            System.out.println(ticketNow.vehicle.licensePlate);
+            System.out.println(ticketNow.dateTime);
+            System.out.println(ticketNow.speedPercentageExceeded);
+        }
 
     }
+
 }
  
