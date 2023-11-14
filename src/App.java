@@ -8,30 +8,27 @@ public class App {
         double speed = 0.0;
         double speedLimit = 60.0;
 
+        List<Vehicle> vehicleList = new ArrayList<Vehicle>();
         List<Ticket> ticketList = new ArrayList<Ticket>();
         
         for(int i = 0; i < 50; i++) {
-            long measurement1 = speedometer.sensor1.getCurrentTimeMillis();
+            long timestamp1 = speedometer.sensor1.getCurrentTimeMillis();
 
             // these two lines simulates the interval of a vehicle passing by the pair of sensors
             long interval = Double.valueOf(Math.random() * 60 + 40).longValue();
             Thread.sleep(interval);
 
-            long measurement2 = speedometer.sensor2.getCurrentTimeMillis();
+            long timestamp2 = speedometer.sensor2.getCurrentTimeMillis();
 
-            speed = speedometer.getSpeed(measurement1, measurement2);
+            speed = speedometer.getSpeed(timestamp1, timestamp2);
 
-            Vehicle vehicle = new Vehicle(speed);
+            Vehicle vehicle = new Vehicle((double) Math.round(speed));
+            vehicleList.add(vehicle);
 
-            if(speed > speedLimit) {
+            if(vehicle.speed > speedLimit) {
                 Ticket ticket = new Ticket(vehicle);
-
-                ticket.getLicencePlate();
                 ticket.getSpeedPercentageExceeded(speedLimit);
-
                 ticketList.add(ticket);
-
-                // System.out.println("Vehicle fined!" + "\n" + "Date and time: " + ticket.dateTime + "\n" + "Speed exceeds limit: " + vehicle.speed + "\n");
             }
             else {
                 System.out.println("Vehicle OK!");
@@ -43,10 +40,11 @@ public class App {
         for(int i = 0; i < ticketList.size(); i++) {
             Ticket ticketNow = ticketList.get(i);
 
-            System.out.println(ticketNow.vehicle.speed);
-            System.out.println(ticketNow.vehicle.licensePlate);
-            System.out.println(ticketNow.dateTime);
-            System.out.println(ticketNow.speedPercentageExceeded);
+            System.out.println("\n");
+            System.out.println("Speed: " + ticketNow.vehicle.speed + "km/h");
+            System.out.println("Speed limit percentage exceeded: " + ticketNow.speedPercentageExceeded + "%");
+            System.out.println("Date and Time: " + ticketNow.dateTime);
+            System.out.println("Licente plate: " + ticketNow.vehicle.licensePlate);
         }
 
     }

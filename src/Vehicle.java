@@ -7,4 +7,8 @@ public class Vehicle {
         this.licensePlate = false;
     }
 
+    public void getLicencePlate() {
+        System.out.println("Taking photo of licence plate...");
+        this.licensePlate = true;
+    }
 }
